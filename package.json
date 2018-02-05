@@ -23,6 +23,7 @@
   "homepage": "https://github.com/swalrito/simple-web-crawler#readme",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "eventproxy": "^1.0.0",
     "express": "^4.16.2",
     "koa": "^2.4.1",
     "koa-router": "^7.3.0",
