@@ -3,6 +3,7 @@ const superagent = require('superagent')
 const cheerio = require('cheerio')
 const async =require('async')
 const Url = require('url')
+const MongoClient=require('mongodb').MongoClient
 //创建一个router实例
 const router = new Router()
 
@@ -90,9 +91,29 @@ router.get('/crawler',async (ctx,next)=>{
         async.mapLimit(topics,5,function(topic,callback){
             fetchUrl(topic,callback)
         },function(err,result){
-            console.log('final:')
-            console.log(result)
-            console.log(topics)
+            console.log('爬取完毕，争取链接数据库，以写入数据……')
+            // 链接数据库
+            MongoClient.connect('mongodb://localhost:27017/cnode',function(err,db){
+                if(err){
+                    console.log(err)
+                    return 
+                }
+                for(let topic of topics){
+                    const url=topic.url
+                    const title=topic.title
+                    const comment1=topic.comment1
+                    // 写入document
+                    db.collection('cnode').insertOne({
+                        "url":url,
+                        "title":title,
+                        "comment1":comment1
+                    },function(err,res){
+                        console.log('正在写入数据库……')
+                        console.log("id"+res.insertedId)
+                    })
+                }
+                console.log('写入数据库完成……')
+            })
         })
     })
     
